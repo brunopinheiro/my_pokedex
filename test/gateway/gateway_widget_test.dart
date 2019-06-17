@@ -39,4 +39,24 @@ void main() {
     expect(find.text('loading...'), findsNothing);
     expect(find.text("we're done!"), findsOneWidget);
   });
+
+  testWidgets("Shows error message when gateway data couldn't be fetched", (WidgetTester tester) async {
+    var httpResponse = PublishSubject<String>();
+    var httpClientMock = HttpClientMock();
+    httpClientMock.getMock = (_) => httpResponse;
+
+    var materialApp = MaterialApp(
+      title: "Gateway Widget Test",
+      home: GatewayWidget("testUrl", httpClientMock)
+    );
+
+    await tester.pumpWidget(materialApp);
+    expect(find.text('loading...'), findsOneWidget);
+
+    httpResponse.addError("something went wrong");
+    await tester.pump();
+
+    expect(find.text("Couldn't fetch API data. Please try again"), findsOneWidget);
+    expect(find.byType(IconButton), findsOneWidget);
+  });
 }

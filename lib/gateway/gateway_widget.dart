@@ -10,40 +10,51 @@ class GatewayWidget extends StatefulWidget {
   _GatewayWidgetState createState() => _state;
 }
 
+enum _GatewayFetchingState {
+  loading,
+  complete,
+  error
+}
+
 class _GatewayWidgetState extends State<GatewayWidget> {
   final String _host;
   final HttpClient _httpClient;
   final _GatewayView _view = _GatewayView();
-  bool _loading;
+  _GatewayFetchingState _fetchingState;
 
   _GatewayWidgetState(String host, HttpClient httpClient): _host = host, _httpClient = httpClient; 
 
   @override
   void initState(){
-    _loading = true;
+    _fetchingState = _GatewayFetchingState.loading;
 
     _httpClient
       .get("$_host")
       .listen(
         (_) => {},
-        onDone: _showDoneWidget
+        cancelOnError: true,
+        onError: (_) => setState(() { _fetchingState = _GatewayFetchingState.error; }),
+        onDone: () => setState(() { _fetchingState = _GatewayFetchingState.complete; })
       );
 
     super.initState();
   }
 
-  void _showDoneWidget() {
-    setState(() {
-      _loading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext buildContext) {
     return Scaffold(
-      body: _loading ? _view.loadingWidget() : _view.doneWidget(),
+      body: _bodyView(),
       backgroundColor: Colors.red[300]
     );
+  }
+
+  Widget _bodyView() {
+    switch(_fetchingState) {
+      case _GatewayFetchingState.loading: return _view.loadingWidget();
+      case _GatewayFetchingState.error: return _view.retryWidget();
+      case _GatewayFetchingState.complete: return _view.doneWidget(); 
+      default: return _view.retryWidget();
+    }
   }
 }
 
@@ -65,6 +76,15 @@ class _GatewayView {
   Widget doneWidget() {
     return Center(child: 
       Text("we're done!", style: TextStyle(color: Colors.white))
+    );
+  }
+
+  Widget retryWidget() {
+    return Center(
+      child: Column(children: <Widget>[
+        Text("Couldn't fetch API data. Please try again", style: TextStyle(color: Colors.white)),
+        IconButton(icon: Icon(Icons.replay, color: Colors.white), onPressed: () {})
+      ], mainAxisAlignment: MainAxisAlignment.center)
     );
   }
 }
