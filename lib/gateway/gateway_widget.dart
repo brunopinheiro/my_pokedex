@@ -26,6 +26,11 @@ class _GatewayWidgetState extends State<GatewayWidget> {
 
   @override
   void initState(){
+    _fetchGatewayData(); 
+    super.initState();
+  }
+
+  void _fetchGatewayData() {
     _fetchingState = _GatewayFetchingState.loading;
 
     _httpClient
@@ -36,8 +41,6 @@ class _GatewayWidgetState extends State<GatewayWidget> {
         onError: (_) => setState(() { _fetchingState = _GatewayFetchingState.error; }),
         onDone: () => setState(() { _fetchingState = _GatewayFetchingState.complete; })
       );
-
-    super.initState();
   }
 
   @override
@@ -51,9 +54,9 @@ class _GatewayWidgetState extends State<GatewayWidget> {
   Widget _bodyView() {
     switch(_fetchingState) {
       case _GatewayFetchingState.loading: return _view.loadingWidget();
-      case _GatewayFetchingState.error: return _view.retryWidget();
+      case _GatewayFetchingState.error: return _view.retryWidget(_fetchGatewayData);
       case _GatewayFetchingState.complete: return _view.doneWidget(); 
-      default: return _view.retryWidget();
+      default: return _view.retryWidget(_fetchGatewayData);
     }
   }
 }
@@ -79,11 +82,11 @@ class _GatewayView {
     );
   }
 
-  Widget retryWidget() {
+  Widget retryWidget(Function retryCallback) {
     return Center(
       child: Column(children: <Widget>[
         Text("Couldn't fetch API data. Please try again", style: TextStyle(color: Colors.white)),
-        IconButton(icon: Icon(Icons.replay, color: Colors.white), onPressed: () {})
+        IconButton(icon: Icon(Icons.replay, color: Colors.white), onPressed: retryCallback)
       ], mainAxisAlignment: MainAxisAlignment.center)
     );
   }
