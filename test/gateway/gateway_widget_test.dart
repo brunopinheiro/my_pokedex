@@ -3,16 +3,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:my_pokedex/gateway/gateway_widget.dart';
 import 'package:rxdart/rxdart.dart';
-import '../http_client_mock.dart';
+import '../http_client_stub.dart';
 
 void main() {
   testWidgets('Show loading at the beginning', (WidgetTester tester) async {
-    var httpClientMock = HttpClientMock();
-    httpClientMock.getMock = (_) => Observable.never();
+    var httpClientStub = HttpClientStub();
+    httpClientStub.getStub = (_) => Observable.never();
 
     var materialApp = MaterialApp(
       title: "Gateway Widget Test",
-      home: GatewayWidget("testUrl", httpClientMock)
+      home: GatewayWidget("testUrl", httpClientStub)
     );
 
     await tester.pumpWidget(materialApp);
@@ -21,12 +21,12 @@ void main() {
 
   testWidgets("Hides loading when gateway data is loaded", (WidgetTester tester) async {
     var httpResponse = PublishSubject<String>();
-    var httpClientMock = HttpClientMock();
-    httpClientMock.getMock = (_) => httpResponse;
+    var httpClientStub = HttpClientStub();
+    httpClientStub.getStub = (_) => httpResponse;
 
     var materialApp = MaterialApp(
       title: "Gateway Widget Test",
-      home: GatewayWidget("testUrl", httpClientMock)
+      home: GatewayWidget("testUrl", httpClientStub)
     );
 
     await tester.pumpWidget(materialApp);
@@ -42,12 +42,12 @@ void main() {
 
   testWidgets("Shows error message when gateway data couldn't be fetched", (WidgetTester tester) async {
     var httpResponse = PublishSubject<String>();
-    var httpClientMock = HttpClientMock();
-    httpClientMock.getMock = (_) => httpResponse;
+    var httpClientStub = HttpClientStub();
+    httpClientStub.getStub = (_) => httpResponse;
 
     var materialApp = MaterialApp(
       title: "Gateway Widget Test",
-      home: GatewayWidget("testUrl", httpClientMock)
+      home: GatewayWidget("testUrl", httpClientStub)
     );
 
     await tester.pumpWidget(materialApp);
@@ -61,18 +61,18 @@ void main() {
   });
 
   testWidgets("Retries fetch gateway data when replay button is pressed", (WidgetTester tester) async {
-    var httpClientMock = HttpClientMock();
-    httpClientMock.getMock = (_) => Observable.error("Something went wrong");
+    var httpClientStub = HttpClientStub();
+    httpClientStub.getStub = (_) => Observable.error("Something went wrong");
 
     var materialApp = MaterialApp(
       title: "Gateway Widget Test",
-      home: GatewayWidget("testUrl", httpClientMock)
+      home: GatewayWidget("testUrl", httpClientStub)
     );
 
     await tester.pumpWidget(materialApp);
     await tester.pump();
 
-    httpClientMock.getMock = (_) => Observable.empty();
+    httpClientStub.getStub = (_) => Observable.empty();
     expect(find.text("Couldn't fetch API data. Please try again"), findsOneWidget);
     expect(find.text("we're done"), findsNothing);
 
