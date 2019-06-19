@@ -11,3 +11,25 @@ class HttpClientStub implements HttpClient {
     return getStub(url);
   }
 }
+
+class NeverEndingHttpClient implements HttpClient {
+  Observable get(String url) {
+    return Observable.never();
+  }
+}
+
+class FailingHttpClient implements HttpClient {
+  Observable get(String url) {
+    return Observable.error('could not fetch data from $url');
+  }
+}
+
+class SuccessHttpClient implements HttpClient {
+  final String _response;
+
+  SuccessHttpClient(String response): _response = response;
+
+  Observable get(String url) {
+    return Observable.just(_response);
+  }
+}

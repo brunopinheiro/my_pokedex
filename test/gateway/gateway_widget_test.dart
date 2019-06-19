@@ -1,85 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'package:my_pokedex/gateway/gateway_widget.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:my_pokedex/http_client.dart';
 import '../http_client_stub.dart';
 
 void main() {
-  testWidgets('Show loading at the beginning', (WidgetTester tester) async {
-    var httpClientStub = HttpClientStub();
-    httpClientStub.getStub = (_) => Observable.never();
-
-    var materialApp = MaterialApp(
-      title: "Gateway Widget Test",
-      home: GatewayWidget("testUrl", httpClientStub)
-    );
-
-    await tester.pumpWidget(materialApp);
-    expect(find.text('loading...'), findsOneWidget);
+  testWidgets('should show loading state while fetching gateway data', (WidgetTester tester) async {
+    await _pumpGateway(NeverEndingHttpClient(), tester);
+    _verifyLoadingState();
   });
 
-  testWidgets("Hides loading when gateway data is loaded", (WidgetTester tester) async {
-    var httpResponse = PublishSubject<String>();
-    var httpClientStub = HttpClientStub();
-    httpClientStub.getStub = (_) => httpResponse;
+  testWidgets('should show done state when successfully fetched gateway data', (WidgetTester tester) async {
+    await _pumpGateway(SuccessHttpClient('simple response'), tester);
+    _verifyLoadingState();
 
-    var materialApp = MaterialApp(
-      title: "Gateway Widget Test",
-      home: GatewayWidget("testUrl", httpClientStub)
-    );
-
-    await tester.pumpWidget(materialApp);
-    expect(find.text('loading...'), findsOneWidget);
-    expect(find.text("we're done!"), findsNothing);
-
-    httpResponse.close();
     await tester.pump();
-
-    expect(find.text('loading...'), findsNothing);
-    expect(find.text("we're done!"), findsOneWidget);
+    _verifyDoneState();
   });
 
-  testWidgets("Shows error message when gateway data couldn't be fetched", (WidgetTester tester) async {
-    var httpResponse = PublishSubject<String>();
-    var httpClientStub = HttpClientStub();
-    httpClientStub.getStub = (_) => httpResponse;
-
-    var materialApp = MaterialApp(
-      title: "Gateway Widget Test",
-      home: GatewayWidget("testUrl", httpClientStub)
-    );
-
-    await tester.pumpWidget(materialApp);
-    expect(find.text('loading...'), findsOneWidget);
-
-    httpResponse.addError("something went wrong");
+  testWidgets('should show retry state when received an error when fetching gateway data', (WidgetTester tester) async {
+    await _pumpGateway(FailingHttpClient(), tester);
     await tester.pump();
-
-    expect(find.text("Couldn't fetch API data. Please try again"), findsOneWidget);
-    expect(find.byType(IconButton), findsOneWidget);
+    _verifyRetryState();
   });
 
-  testWidgets("Retries fetch gateway data when replay button is pressed", (WidgetTester tester) async {
+  testWidgets('should try fetch gateway data again when pressing retry button', (WidgetTester tester) async {
     var httpClientStub = HttpClientStub();
     httpClientStub.getStub = (_) => Observable.error("Something went wrong");
 
-    var materialApp = MaterialApp(
-      title: "Gateway Widget Test",
-      home: GatewayWidget("testUrl", httpClientStub)
-    );
-
-    await tester.pumpWidget(materialApp);
+    await _pumpGateway(httpClientStub, tester);
     await tester.pump();
+    _verifyRetryState();
 
     httpClientStub.getStub = (_) => Observable.empty();
-    expect(find.text("Couldn't fetch API data. Please try again"), findsOneWidget);
-    expect(find.text("we're done"), findsNothing);
-
     await tester.tap(find.byType(IconButton));
     await tester.pump();
+    _verifyDoneState();
+  });
+}
 
-    expect(find.text("we're done!"), findsOneWidget);
-    expect(find.text("Couldn't fetch API data. Please try again"), findsNothing);
-   });
+Future<void> _pumpGateway(HttpClient httpClient, WidgetTester tester) {
+  var app = MaterialApp(title: 'GatewayTest', home: GatewayWidget('testUrl', httpClient));
+  return tester.pumpWidget(app);
+}
+
+void _verifyLoadingState() {
+  _matchLoadingWidget(findsOneWidget);
+  _matchDoneWidget(findsNothing);
+  _matchRetryWidgets(findsNothing);
+}
+
+void _verifyDoneState() {
+  _matchLoadingWidget(findsNothing);
+  _matchDoneWidget(findsOneWidget);
+  _matchRetryWidgets(findsNothing);
+}
+
+void _verifyRetryState() {
+  _matchLoadingWidget(findsNothing);
+  _matchDoneWidget(findsNothing);
+  _matchRetryWidgets(findsOneWidget);
+}
+
+void _matchLoadingWidget(Matcher matcher) => expect(find.text('loading...'), matcher);
+void _matchDoneWidget(Matcher matcher) => expect(find.text("we're done!"), matcher);
+void _matchRetryWidgets(Matcher matcher) {
+  expect(find.text("Couldn't fetch API data. Please try again"), matcher);
+  expect(find.byType(IconButton), matcher);
 }
