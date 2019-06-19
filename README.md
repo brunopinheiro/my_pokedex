@@ -1,7 +1,9 @@
+[![Build Status](https://travis-ci.com/brunopinheiro/my_pokedex.svg?branch=master)](https://travis-ci.com/brunopinheiro/my_pokedex)
+
 # My Pokédex
 Pokédex mobile app built using Flutter
 
-> I'm getting the data from (PokéApi)[https://pokeapi.co]
+> I'm getting the data from [PokéApi](https://pokeapi.co)
 
 ## Getting Started
 ### running tests
