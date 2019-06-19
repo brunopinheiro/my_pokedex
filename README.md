@@ -1,16 +1,18 @@
-# my_pokedex
+# My Pokédex
+Pokédex mobile app built using Flutter
 
-A new Flutter project.
+> I'm getting the data from (PokéApi)[https://pokeapi.co]
 
 ## Getting Started
+### running tests
+```sh
+$ flutter analyze
+$ flutter test
+```
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+### running app on emulator
+```sh
+$ flutter emulators
+$ flutter emulators --launch <emulator_id>
+$ flutter run
+```
