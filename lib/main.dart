@@ -1,8 +1,4 @@
-import 'package:http/http.dart';
 import "package:flutter/material.dart";
-import 'package:my_pokedex/http_client.dart';
-
-import 'gateway/gateway_widget.dart';
 
 const host = "https://pokeapi.co/api/v2";
 
@@ -14,10 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Pokedex",
       theme: ThemeData(primaryColor: Colors.white),
-      home: GatewayWidget(
-        host,
-        HttpClient(Client())
-      )
+      home: Text("Hello World")
     );
   }
 }
