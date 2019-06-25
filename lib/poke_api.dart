@@ -1,35 +1,22 @@
 import 'dart:convert';
-import 'package:http/http.dart';
+
+import 'package:my_pokedex/http_client.dart';
 
 class PokeApi {
   static const String kBaseUrl = 'https://pokeapi.co/api/v2';
-  final Client client;
+  final HttpClient client;
 
-  PokeApi(Client client): this.client = client;
+  PokeApi(HttpClient client): this.client = client;
 
   Future<String> request(String key) {
-    return gateway().then((gatewayData) {
-      if(gatewayData.containsKey(key)) {
-        return get(gatewayData[key]);
+    return client.get(kBaseUrl)
+      .then((response) => json.decode(response))
+      .then((gateway) {
+      if(gateway.containsKey(key)) {
+        return client.get(gateway[key]);
       }
 
       throw("404 - $key key not found");
     });
-  }
-
-  Future<Map> gateway() {
-    return get(kBaseUrl).then((response) => json.decode(response));
-  }
-
-  Future<String> get(String url) {
-    return client
-      .get(url)
-      .then((response) {
-        if(response.statusCode == 200) {
-          return response.body;
-        }
-
-        throw("${response.statusCode} - ${response.body}");
-      });
   }
 }

@@ -1,16 +1,17 @@
 import "package:flutter/material.dart";
 
-const host = "https://pokeapi.co/api/v2";
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext buildContext) {
     return MaterialApp(
-      title: "Pokedex",
-      theme: ThemeData(primaryColor: Colors.white),
-      home: Text("Hello World")
+      title: 'My Pokédex',
+      theme: ThemeData(primaryColor: Colors.red),
+      home: Scaffold(
+        appBar: AppBar(title: Text('Pokédex')),
+        body: Center(child: Text('List of Pokémons'))
+      ) 
     );
   }
 }
