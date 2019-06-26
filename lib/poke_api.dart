@@ -1,8 +1,9 @@
 import 'dart:convert';
 
+import 'package:my_pokedex/api.dart';
 import 'package:my_pokedex/http_client.dart';
 
-class PokeApi {
+class PokeApi implements Api {
   static const String kBaseUrl = 'https://pokeapi.co/api/v2';
   final HttpClient client;
 
