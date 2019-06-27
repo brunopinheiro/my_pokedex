@@ -12,7 +12,7 @@ void main() {
       });
     
       final httpClient = new ValidatorHttpClient(mockClient);
-      expect(httpClient.get('anything'), completion(equals(json.encode({ 'success': true }))));
+      expect(httpClient.get('anything').single, completion(equals(json.encode({ 'success': true }))));
   });
 
   test('should throw error if response status code is not 200', () {
@@ -21,6 +21,6 @@ void main() {
     });
 
     final httpClient = new ValidatorHttpClient(mockClient);
-    expect(httpClient.get('anything'), throwsA('403 - error body'));
+    expect(httpClient.get('anything').single, throwsA('403 - error body'));
   });
 }

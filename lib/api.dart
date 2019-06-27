@@ -1,3 +1,3 @@
 abstract class Api {
-  Future<String> request(String key);
+  Stream<String> request(String key);
 }

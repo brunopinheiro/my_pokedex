@@ -9,10 +9,10 @@ class PokeApi implements Api {
 
   PokeApi(HttpClient client): this.client = client;
 
-  Future<String> request(String key) {
+  Stream<String> request(String key) {
     return client.get(kBaseUrl)
-      .then((response) => json.decode(response))
-      .then((gateway) {
+      .map((response) => json.decode(response))
+      .asyncExpand((gateway) {
       if(gateway.containsKey(key)) {
         return client.get(gateway[key]);
       }

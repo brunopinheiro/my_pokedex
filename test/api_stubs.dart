@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:my_pokedex/api.dart';
 
 class DelayedApi implements Api {
@@ -5,10 +7,10 @@ class DelayedApi implements Api {
   final int _delay;
   DelayedApi(int delay, Api api): _delay = delay, _baseApi = api;
 
-  Future<String> request(String key) {
-    return Future
-        .delayed(Duration(seconds: _delay))
-        .then((_) => _baseApi.request(key));
+  Stream<String> request(String key) {
+    return Stream
+      .fromFuture(Future.delayed(Duration(seconds: _delay)))
+      .asyncExpand((_) => _baseApi.request(key));
   }
 }
 
@@ -16,7 +18,16 @@ class SuccessfulApi implements Api {
   final String _response;
   SuccessfulApi(String response): _response = response;
 
-  Future<String> request(String key) {
-    return Future.value(_response);
+  Stream<String> request(String key) {
+    return Stream.fromFuture(Future.value(_response));
+  }
+}
+
+class FailingApi implements Api {
+  final String _errorResponse;
+  FailingApi(String errorResponse): _errorResponse = errorResponse;
+
+  Stream<String> request(String key) {
+    return Stream.fromFuture(Future.error(_errorResponse));
   }
 }
