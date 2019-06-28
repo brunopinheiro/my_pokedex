@@ -46,24 +46,39 @@ class PokeListState extends State<PokeList> {
 
   Widget getBody() {
     switch(_viewState) {
-      case PokeListViewState.error: return Column(
-        children: [
-          Text('Something went wrong. Please, try again'),
-          IconButton(icon: Icon(Icons.replay), onPressed: (){})
-        ],
-        mainAxisAlignment: MainAxisAlignment.center,
-      );
-      case PokeListViewState.success: return Center(child: Text('Success...'));
-      default: return Row(
-        children: [
-          CircularProgressIndicator(),
-          Container(width: 10),
-          Text('Loading...')
-        ],
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-      );
+      case PokeListViewState.error: return getErrorStateWidget(); 
+      case PokeListViewState.success: return getListStateWidget();
+      default: return getLoadingStateWidget(); 
     }
+  }
+
+  Widget getErrorStateWidget() {
+    return Column(
+      children: [
+        Text('Something went wrong. Please, try again'),
+        IconButton(icon: Icon(Icons.replay), onPressed: (){
+          setState(() { _viewState = PokeListViewState.loading; });
+          fetchPokemonList();
+        })
+      ],
+      mainAxisAlignment: MainAxisAlignment.center,
+    );
+  }
+
+  Widget getListStateWidget() {
+    return Center(child: Text('Success...'));
+  }
+
+  Widget getLoadingStateWidget() {
+    return Row(
+      children: [
+        CircularProgressIndicator(),
+        Container(width: 10),
+        Text('Loading...')
+      ],
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+    );
   }
 
   @override

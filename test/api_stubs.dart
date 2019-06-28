@@ -31,3 +31,12 @@ class FailingApi implements Api {
     return Stream.fromFuture(Future.error(_errorResponse));
   }
 }
+
+typedef StubbedApiRequest = Stream<String> Function(String key);
+class StubbedApi implements Api {
+  StubbedApiRequest requestStub;
+
+  Stream<String> request(String key) {
+    return requestStub(key);
+  }
+}

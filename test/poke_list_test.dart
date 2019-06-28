@@ -32,6 +32,26 @@ void main() {
     await tester.pump();
     verifyErrorState();
   });
+
+  testWidgets('should retry fetching pokemons when pressing retry button while on error state', (WidgetTester tester) async {
+    final apiStub = new StubbedApi();
+    apiStub.requestStub = (_) => Stream.fromFuture(Future.error('error message'));
+
+    await pumpPokeList(apiStub, tester);
+    await tester.pump();
+
+    apiStub.requestStub = (_) => Future
+      .delayed(Duration(seconds: 1))
+      .then((_) => Future.value('success'))
+      .asStream();
+
+    await tester.tap(find.byIcon(Icons.replay));
+    await tester.pump();
+    verifyLoadingState();
+
+    await tester.pump(Duration(seconds: 3));
+    verifyListState();
+  });
 }
 
 Future<void> pumpPokeList(Api api, WidgetTester tester) {
