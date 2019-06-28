@@ -6,6 +6,10 @@ import 'package:my_pokedex/poke_list.dart';
 
 import 'api_stubs.dart';
 
+const String kSuccess = 'Success...';
+const String kLoading = 'Loading...';
+const String kError = 'Something went wrong. Please, try again';
+
 void main() {
   testWidgets('should show loading state while waiting for pokemon list', (WidgetTester tester) async {
     await pumpPokeList(DelayedApi(1, SuccessfulApi('ok')), tester);
@@ -15,6 +19,12 @@ void main() {
     // I've already added `.cancel()` during the dispose, but, this method is async, which means the
     // timer validation by flutter is going to happen first 
     await tester.pump(Duration(seconds: 4));
+  });
+
+  testWidgets('should show the pokemon list after getting the response', (WidgetTester tester) async {
+    await pumpPokeList(SuccessfulApi('ok'), tester);
+    await tester.pump();
+    verifyListState();
   });
 
   testWidgets('should show the error state when failed to retrieve pokemon list', (WidgetTester tester) async {
@@ -35,16 +45,22 @@ Future<void> pumpPokeList(Api api, WidgetTester tester) {
 
 void verifyLoadingState() {
   matchLoadingWidget(findsOneWidget);
+  matchListWidget(findsNothing);
+  matchErrorWidgets(findsNothing);
+}
+
+void verifyListState() {
+  matchLoadingWidget(findsNothing);
+  matchListWidget(findsOneWidget);
   matchErrorWidgets(findsNothing);
 }
 
 void verifyErrorState() {
   matchLoadingWidget(findsNothing);
+  matchListWidget(findsNothing);
   matchErrorWidgets(findsOneWidget);
 }
 
-void matchLoadingWidget(Matcher matcher) => expect(find.text('Loading...'), matcher);
-void matchErrorWidgets(Matcher matcher) {
-  expect(find.text('Something went wrong. Please, try again'), matcher);
-  expect(find.byIcon(Icons.replay), matcher);
-}
+void matchLoadingWidget(Matcher matcher) => expect(find.text(kLoading), matcher);
+void matchListWidget(Matcher matcher) => expect(find.text(kSuccess), matcher);
+void matchErrorWidgets(Matcher matcher) => [find.text(kError), find.byIcon(Icons.replay)].forEach((r) => expect(r, matcher));

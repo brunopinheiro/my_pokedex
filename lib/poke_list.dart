@@ -31,7 +31,7 @@ class PokeListState extends State<PokeList> {
     _fetchSubscription = _api
       .request('generation')
       .listen(
-        (_) {},
+        (_) => setState(() { _viewState = PokeListViewState.success; }),
         onError: (_) => setState(() { _viewState = PokeListViewState.error; })
       );
   }
@@ -53,6 +53,7 @@ class PokeListState extends State<PokeList> {
         ],
         mainAxisAlignment: MainAxisAlignment.center,
       );
+      case PokeListViewState.success: return Center(child: Text('Success...'));
       default: return Row(
         children: [
           CircularProgressIndicator(),
@@ -74,5 +75,6 @@ class PokeListState extends State<PokeList> {
 
 enum PokeListViewState {
   loading,
+  success,
   error
 }
