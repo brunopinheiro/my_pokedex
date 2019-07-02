@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:my_pokedex/api.dart';
-import 'package:my_pokedex/poke_list.dart';
+import 'package:my_pokedex/generation_widget.dart';
 
 import 'api_stubs.dart';
 
@@ -11,8 +11,8 @@ const String kLoading = 'Loading...';
 const String kError = 'Something went wrong. Please, try again';
 
 void main() {
-  testWidgets('should show loading state while waiting for pokemon list', (WidgetTester tester) async {
-    await pumpPokeList(DelayedApi(1, SuccessfulApi('ok')), tester);
+  testWidgets('should show loading state while waiting for generation data', (WidgetTester tester) async {
+    await pumpGenerationWidget(DelayedApi(1, SuccessfulApi('ok')), tester);
     verifyLoadingState();
 
     // turns out that flutter will fail if is there any timer running even after destroying the tree
@@ -22,22 +22,22 @@ void main() {
   });
 
   testWidgets('should show the pokemon list after getting the response', (WidgetTester tester) async {
-    await pumpPokeList(SuccessfulApi('ok'), tester);
+    await pumpGenerationWidget(SuccessfulApi('ok'), tester);
     await tester.pump();
     verifyListState();
   });
 
-  testWidgets('should show the error state when failed to retrieve pokemon list', (WidgetTester tester) async {
-    await pumpPokeList(FailingApi('error message'), tester);
+  testWidgets('should show the error state when failed to retrieve generation data', (WidgetTester tester) async {
+    await pumpGenerationWidget(FailingApi('error message'), tester);
     await tester.pump();
     verifyErrorState();
   });
 
-  testWidgets('should retry fetching pokemons when pressing retry button while on error state', (WidgetTester tester) async {
+  testWidgets('should retry fetching generation when pressing retry button while on error state', (WidgetTester tester) async {
     final apiStub = new StubbedApi();
     apiStub.requestStub = (r, i) => Stream.fromFuture(Future.error('error message'));
 
-    await pumpPokeList(apiStub, tester);
+    await pumpGenerationWidget(apiStub, tester);
     await tester.pump();
 
     apiStub.requestStub = (r, i) => Future
@@ -54,11 +54,11 @@ void main() {
   });
 }
 
-Future<void> pumpPokeList(Api api, WidgetTester tester) {
+Future<void> pumpGenerationWidget(Api api, WidgetTester tester) {
   return tester.pumpWidget(
     MaterialApp(
-      title: 'PokeList test',
-      home: new PokeList(api)
+      title: 'Generation test',
+      home: new GenerationWidget(api)
     )
   );
 }

@@ -5,34 +5,34 @@ import 'package:flutter/material.dart';
 
 import 'package:my_pokedex/api.dart';
 
-class PokeList extends StatefulWidget {
-  final PokeListState _state;
-  PokeList(Api api): _state = new PokeListState(api);
+class GenerationWidget extends StatefulWidget {
+  final GenerationWidgetState _state;
+  GenerationWidget(Api api): _state = new GenerationWidgetState(api);
 
   @override
-  PokeListState createState() => _state;
+  GenerationWidgetState createState() => _state;
 }
 
-class PokeListState extends State<PokeList> {
+class GenerationWidgetState extends State<GenerationWidget> {
   final Api _api;
-  PokeListViewState _viewState;
+  GenerationWidgetViewState _viewState;
   StreamSubscription _fetchSubscription;
 
-  PokeListState(Api api): _api = api;
+  GenerationWidgetState(Api api): _api = api;
 
   @override
   void initState() {
     super.initState();
-    _viewState = PokeListViewState.loading;
-    fetchPokemonList();
+    _viewState = GenerationWidgetViewState.loading;
+    fetchFirstGeneration();
   }
 
-  void fetchPokemonList() {
+  void fetchFirstGeneration() {
     _fetchSubscription = _api
       .request('generation')
       .listen(
-        (_) => setState(() { _viewState = PokeListViewState.success; }),
-        onError: (_) => setState(() { _viewState = PokeListViewState.error; })
+        (_) => setState(() { _viewState = GenerationWidgetViewState.success; }),
+        onError: (_) => setState(() { _viewState = GenerationWidgetViewState.error; })
       );
   }
 
@@ -46,8 +46,8 @@ class PokeListState extends State<PokeList> {
 
   Widget getBody() {
     switch(_viewState) {
-      case PokeListViewState.error: return getErrorStateWidget(); 
-      case PokeListViewState.success: return getListStateWidget();
+      case GenerationWidgetViewState.error: return getErrorStateWidget(); 
+      case GenerationWidgetViewState.success: return getListStateWidget();
       default: return getLoadingStateWidget(); 
     }
   }
@@ -57,8 +57,8 @@ class PokeListState extends State<PokeList> {
       children: [
         Text('Something went wrong. Please, try again'),
         IconButton(icon: Icon(Icons.replay), onPressed: (){
-          setState(() { _viewState = PokeListViewState.loading; });
-          fetchPokemonList();
+          setState(() { _viewState = GenerationWidgetViewState.loading; });
+          fetchFirstGeneration();
         })
       ],
       mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +88,7 @@ class PokeListState extends State<PokeList> {
   }
 }
 
-enum PokeListViewState {
+enum GenerationWidgetViewState {
   loading,
   success,
   error
