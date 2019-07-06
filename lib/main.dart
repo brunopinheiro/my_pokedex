@@ -1,4 +1,9 @@
+import 'package:http/http.dart';
 import "package:flutter/material.dart";
+
+import 'package:my_pokedex/generation_widget.dart';
+import 'package:my_pokedex/poke_api.dart';
+import 'package:my_pokedex/validator_http_client.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,10 +13,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My Pokédex',
       theme: ThemeData(primaryColor: Colors.red),
-      home: Scaffold(
-        appBar: AppBar(title: Text('Pokédex')),
-        body: Center(child: Text('List of Pokémons'))
-      ) 
+      home: GenerationWidget(
+          PokeApi(
+            ValidatorHttpClient(
+              Client()
+            )
+          )
+        ) 
     );
   }
 }

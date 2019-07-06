@@ -10,14 +10,15 @@ class PokeApi implements Api {
   PokeApi(HttpClient client): this.client = client;
 
   Stream<String> request(String resource, [String id = ""]) {
-    return client.get(kBaseUrl)
+    return client
+      .get(kBaseUrl)
       .map((response) => json.decode(response))
       .asyncExpand((gateway) {
-      if(gateway.containsKey(resource)) {
-        return client.get("${gateway[resource]}/$id");
-      }
+        if(gateway.containsKey(resource)) {
+          return client.get("${gateway[resource]}$id");
+        }
 
-      throw("404 - $resource resource not found");
-    });
+        throw("404 - $resource resource not found");
+      });
   }
 }

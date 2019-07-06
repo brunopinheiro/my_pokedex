@@ -8,7 +8,7 @@ void main() {
     test('should follow gateway map to retrieve data', () {
       final httpStub = HttpClientStub((url) {
         if(url == 'https://pokeapi.co/api/v2') {
-          return Stream.fromFuture(Future.value(json.encode({ 'hello': 'https://testing/helloworld' })));
+          return Stream.fromFuture(Future.value(json.encode({ 'hello': 'https://testing/helloworld/' })));
         }
 
         if(url == 'https://testing/helloworld/2') {
