@@ -13,12 +13,6 @@ Generation _$GenerationFromJson(Map<String, dynamic> json) {
       ?.toList());
 }
 
-Map<String, dynamic> _$GenerationToJson(Generation instance) =>
-    <String, dynamic>{'pokemon_species': instance.pokemonLinks};
-
 PokemonLink _$PokemonLinkFromJson(Map<String, dynamic> json) {
   return PokemonLink(json['name'] as String, json['url'] as String);
 }
-
-Map<String, dynamic> _$PokemonLinkToJson(PokemonLink instance) =>
-    <String, dynamic>{'name': instance.name, 'url': instance.url};
