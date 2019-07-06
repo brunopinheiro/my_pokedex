@@ -3,10 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:my_pokedex/api.dart';
 import 'package:my_pokedex/generation_widget.dart';
+import 'package:my_pokedex/generation_list.dart';
 
 import 'api_stubs.dart';
 
-const String kSuccess = 'Success...';
 const String kLoading = 'Loading...';
 const String kError = 'Something went wrong. Please, try again';
 
@@ -82,5 +82,5 @@ void verifyErrorState() {
 }
 
 void matchLoadingWidget(Matcher matcher) => expect(find.text(kLoading), matcher);
-void matchListWidget(Matcher matcher) => expect(find.text(kSuccess), matcher);
+void matchListWidget(Matcher matcher) => expect(find.byType(GenerationList), matcher);
 void matchErrorWidgets(Matcher matcher) => [find.text(kError), find.byIcon(Icons.replay)].forEach((r) => expect(r, matcher));

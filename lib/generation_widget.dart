@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:my_pokedex/api.dart';
+import 'package:my_pokedex/generation_list.dart';
 
 class GenerationWidget extends StatefulWidget {
   final GenerationWidgetState _state;
@@ -66,7 +67,7 @@ class GenerationWidgetState extends State<GenerationWidget> {
   }
 
   Widget getListStateWidget() {
-    return Center(child: Text('Success...'));
+    return GenerationList();
   }
 
   Widget getLoadingStateWidget() {
