@@ -10,7 +10,8 @@ class GenerationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext buildContext) {
-    final pokemonLinks = _generation.pokemonLinks == null ? [] : _generation.pokemonLinks;
+    List<PokemonLink> pokemonLinks = _generation.pokemonLinks == null ? [] : _generation.pokemonLinks;
+    pokemonLinks.sort((p1, p2) => p1.url.compareTo(p2.url));
     return ListView(children: pokemonLinks.map((pokemonLink) => PokemonTile(pokemonLink)).toList());
   }
 }

@@ -19,11 +19,6 @@ class PokemonTileState extends State<PokemonTile> {
 
   @override
   Widget build(BuildContext buildContext) {
-    return Material(child:
-      ListTile(
-        leading: Icon(Icons.photo),
-        title: Text(_pokemonLink.name)
-      )
-    );
+    return Material(child: ListTile(title: Text(_pokemonLink.name)));
   }
 }
