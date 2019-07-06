@@ -12,7 +12,7 @@ const String kError = 'Something went wrong. Please, try again';
 
 void main() {
   testWidgets('should show loading state while waiting for generation data', (WidgetTester tester) async {
-    await pumpGenerationWidget(DelayedApi(1, SuccessfulApi('ok')), tester);
+    await pumpGenerationWidget(DelayedApi(1, SuccessfulApi('{}')), tester);
     verifyLoadingState();
 
     // turns out that flutter will fail if is there any timer running even after destroying the tree
@@ -22,7 +22,7 @@ void main() {
   });
 
   testWidgets('should show the pokemon list after getting the response', (WidgetTester tester) async {
-    await pumpGenerationWidget(SuccessfulApi('ok'), tester);
+    await pumpGenerationWidget(SuccessfulApi('{}'), tester);
     await tester.pump();
     verifyListState();
   });
@@ -42,7 +42,7 @@ void main() {
 
     apiStub.requestStub = (r, i) => Future
       .delayed(Duration(seconds: 1))
-      .then((_) => Future.value('success'))
+      .then((_) => Future.value("{}"))
       .asStream();
 
     await tester.tap(find.byIcon(Icons.replay));

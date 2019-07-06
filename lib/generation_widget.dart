@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:my_pokedex/api.dart';
+import 'package:my_pokedex/generation.dart';
 import 'package:my_pokedex/generation_list.dart';
 
 class GenerationWidget extends StatefulWidget {
@@ -18,6 +20,7 @@ class GenerationWidgetState extends State<GenerationWidget> {
   final Api _api;
   GenerationWidgetViewState _viewState;
   StreamSubscription _fetchSubscription;
+  Generation _generation;
 
   GenerationWidgetState(Api api): _api = api;
 
@@ -30,9 +33,11 @@ class GenerationWidgetState extends State<GenerationWidget> {
 
   void fetchFirstGeneration() {
     _fetchSubscription = _api
-      .request('generation')
+      .request('generation', '1')
+      .map((response) => jsonDecode(response))
+      .map((mappedResponse) => Generation.fromJson(mappedResponse))
       .listen(
-        (_) => setState(() { _viewState = GenerationWidgetViewState.success; }),
+        (generation) => setState(() { _viewState = GenerationWidgetViewState.success; _generation = generation; }),
         onError: (_) => setState(() { _viewState = GenerationWidgetViewState.error; })
       );
   }
@@ -67,7 +72,7 @@ class GenerationWidgetState extends State<GenerationWidget> {
   }
 
   Widget getListStateWidget() {
-    return GenerationList();
+    return GenerationList(_generation);
   }
 
   Widget getLoadingStateWidget() {
