@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:my_pokedex/generation_list.dart';
 import 'package:my_pokedex/generation.dart';
+import 'package:my_pokedex/pokemon_tile.dart';
 
 void main() {
   testWidgets('should show a ListTile for each pokemon of the generation', (WidgetTester tester) async {
@@ -13,9 +14,7 @@ void main() {
 
     await pumpGenerationList(generation, tester);
 
-    expect(find.byType(ListTile), findsNWidgets(2));
-    expect(find.text('sandshrew'), findsOneWidget);
-    expect(find.text('pidgey'), findsOneWidget);
+    expect(find.byType(PokemonTile), findsNWidgets(2));
   });
 }
 
